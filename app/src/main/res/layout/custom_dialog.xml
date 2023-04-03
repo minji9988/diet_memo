@@ -9,7 +9,7 @@
     >
 
     <EditText
-
+        android:id="@+id/healthMemo"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_margin="10dp"
@@ -36,7 +36,7 @@
 
     <Button
         android:id="@+id/saveBtn"
-        android:text="날짜를 선택해주세요"
+        android:text="Save"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_margin="20dp"

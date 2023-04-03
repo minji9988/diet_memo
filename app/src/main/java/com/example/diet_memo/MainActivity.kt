@@ -24,6 +24,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.DatePicker
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
@@ -62,6 +63,9 @@ class MainActivity : AppCompatActivity() {
 
             val DateSelectBtn = mAlertDialog.findViewById<Button>(R.id.dateSelectBtn)
 
+            // 날짜 data와 memo data를 가져와야 한다.
+            var dateText = ""
+
             DateSelectBtn?.setOnClickListener {
 
                 val today = GregorianCalendar()
@@ -85,6 +89,8 @@ class MainActivity : AppCompatActivity() {
                         // 연, 월, 일로 변경해라
                         DateSelectBtn.setText("${year}, ${month + 1}, ${dayOfMonth}")
 
+                        dateText = "${year}, ${month + 1}, ${dayOfMonth}"
+
                     }
 
                 }, year, month, date)
@@ -101,16 +107,39 @@ class MainActivity : AppCompatActivity() {
             // 저장하기 버튼이 클릭되면 db에 저장되도록 해야한다.
             saveBtn?.setOnClickListener {
 
+                // edit text에 들어간 text를 .text.toString()을 사용해서 가져옴
+                val healthMemo = mAlertDialog.findViewById<EditText>(R.id.healthMemo)?.text.toString()
+
                 // Write a message to the database
                 val database = Firebase.database
-                val myRef = database.getReference("message")
+                val myRef = database.getReference("my memo")
+
+                //DataMode.kt에 있는 DateModel을 가져와서 push를 한다.
+                //DataModel이 무엇이냐면 dataText와 healthMemo이다.
+                val model = DataModel(dateText, healthMemo)
+
 
                 //firebase db에 hello world라는 데이터를 넣어준 것이다.
-                myRef.setValue("Hello, World!")
+//                myRef.setValue("Hello, World!")
 
+                // 위에처럼 작성하면 버튼을 클릭했을 때 똑같은 data를 계속 넣어주진 못하게 된다.
+                // push()를 추가해서 button click시 똑같은 data도 계속 add 할 수 있도록 해준다.
+
+                //myRef.push().setValue("Hello, World!")
+
+                // 위에처럼 작성하는 걸 DataModel.kt 만들어서
+                // 아래처럼 짧게 만들어 주었다.
+
+                myRef
+                    .push()
+                    .setValue(model)
+
+
+                ///////////////// 여기까지 만들면 앱 실행시키고, edit text에 특정 data 입력하고
+                // 날짜 선택하고, save button 클릭하면 db에 내가 edit text에 입력한 data와
+                // 선택한 날짜가 저장되는 걸 확인할 수 있다.
 
             }
-
 
             }
 
